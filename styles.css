@@ -402,3 +402,101 @@ body {
         text-align: center;
     }
 }
+
+/* Enhanced Styles for Human-in-the-Loop AI Designer Project */
+.featured-project {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px solid #6366f1;
+    position: relative;
+    overflow: hidden;
+}
+
+.featured-project::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+}
+
+.project-status {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.cutting-edge {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+}
+
+.status-badge.private {
+    background: #fbbf24;
+    color: #92400e;
+}
+
+.project-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.highlight {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    text-align: center;
+}
+
+.tech-tag.featured {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-weight: 600;
+}
+
+.project-link.primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-weight: 600;
+}
+
+.project-link.secondary {
+    background: #f59e0b;
+    color: white;
+}
+
+.project-link.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+}
+
+.project-link.secondary:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .project-highlights {
+        grid-template-columns: 1fr;
+    }
+    
+    .project-status {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
