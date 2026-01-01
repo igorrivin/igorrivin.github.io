@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math OCR Benchmark: Why Gemini Flash Beats Mathpix | Igor Rivin</title>
+    <meta name="description" content="Benchmarking Mathpix against LLM-based OCR for mathematical PDFs. Gemini 3 Flash is 6x cheaper and more accurate.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        .blog-post {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .blog-header {
+            margin-bottom: 3rem;
+            padding-top: 100px;
+        }
+        .blog-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .blog-meta {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .blog-content h2 {
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+        .blog-content h3 {
+            font-size: 1.35rem;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .blog-content p {
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            color: #333;
+        }
+        .blog-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .blog-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        .blog-content th, .blog-content td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .blog-content th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .blog-content tr:hover {
+            background: #f8f9fa;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .error-box {
+            background: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success-box {
+            background: #f0fff4;
+            border-left: 4px solid #38a169;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 1.25rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .tldr {
+            background: #eef2ff;
+            border: 1px solid #c7d2fe;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        .tldr h3 {
+            margin-top: 0;
+            color: #4338ca;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 600px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <article class="blog-post">
+        <a href="/" class="back-link">&larr; Back to Home</a>
+
+        <header class="blog-header">
+            <h1 class="blog-title">Math PDF OCR Benchmark: Why Gemini Flash Beats Mathpix</h1>
+            <div class="blog-meta">December 31, 2025 &bull; 8 min read</div>
+        </header>
+
+        <div class="tldr">
+            <h3>TL;DR</h3>
+            <p><strong>Gemini 3 Flash costs $0.004/page vs Mathpix's $0.025/page (6x cheaper)</strong> and produces more accurate output for mathematical content. Mathpix made critical semantic errors like reading "5" as "$\overline{0}$" that would break mathematical datasets.</p>
+        </div>
+
+        <div class="blog-content">
+            <p>We recently needed to digitize mathematical content from classic textbooks, specifically <em>Problems and Theorems in Analysis I</em> by Pólya and Szegö. The natural choice was Mathpix, the specialized OCR service for STEM content. But before committing to processing hundreds of pages, we decided to benchmark it against modern LLM alternatives.</p>
+
+            <p>The results were surprising.</p>
+
+            <div class="highlight-box">
+                <h3>Key Finding</h3>
+                <p>Mathpix's specialized OCR produced <strong>critical semantic errors</strong> that would break mathematical meaning, while cheaper LLM alternatives produced correct output.</p>
+            </div>
+
+            <h2>The Test Setup</h2>
+
+            <p>We tested pages 20-30 from the Pólya-Szegö book&mdash;two-column mathematical text with formulas, Greek letters, and subscripts. We compared:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Cost/Page</th>
+                        <th>Latency</th>
+                        <th>vs Mathpix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #f0fff4;">
+                        <td><strong>Gemini 3 Flash</strong></td>
+                        <td><strong>$0.0044</strong></td>
+                        <td>8.5s</td>
+                        <td><strong>6x cheaper</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Gemini 2.5 Flash</td>
+                        <td>$0.0069</td>
+                        <td>9.4s</td>
+                        <td>3.6x cheaper</td>
+                    </tr>
+                    <tr>
+                        <td>Mathpix</td>
+                        <td>$0.0250</td>
+                        <td>N/A</td>
+                        <td>baseline</td>
+                    </tr>
+                    <tr>
+                        <td>GPT-5.2</td>
+                        <td>$0.0353</td>
+                        <td>56s</td>
+                        <td>1.4x more</td>
+                    </tr>
+                    <tr>
+                        <td>Claude Opus 4.5</td>
+                        <td>$0.1108</td>
+                        <td>14s</td>
+                        <td>4.4x more</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>The Errors That Break Everything</h2>
+
+            <p>Here's what Mathpix produced for Problem 5:</p>
+
+            <div class="error-box">
+                <strong>Mathpix Output (WRONG):</strong>
+                <pre><code>weights of $1,1,2, \overline{0}, 10,10,20,50$ grams</code></pre>
+            </div>
+
+            <div class="success-box">
+                <strong>Correct (LLM Output):</strong>
+                <pre><code>weights of 1, 1, 2, 5, 10, 10, 20, 50 grams</code></pre>
+            </div>
+
+            <p>The digit <strong>5</strong> was misread as <code>\overline{0}</code> (zero with overline)&mdash;a completely different mathematical concept! This would make the problem unsolvable since the weights no longer sum correctly.</p>
+
+            <h3>More Errors We Found</h3>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Original</th>
+                        <th>Mathpix Read As</th>
+                        <th>Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>5</td>
+                        <td>$\overline{0}$</td>
+                        <td>Integer → Complex notation</td>
+                    </tr>
+                    <tr>
+                        <td>$\varepsilon_8$</td>
+                        <td>$\varepsilon_S$</td>
+                        <td>Subscript 8 → Letter S</td>
+                    </tr>
+                    <tr>
+                        <td>$\zeta$</td>
+                        <td>$\varsigma$</td>
+                        <td>Zeta → Final sigma</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>And the multi-column layout? Completely garbled:</p>
+
+            <pre><code>15. A set of y that is a possers scales are used,
+16. Write (1-1
+
+Find the general
+17. Consider $=1$ -
+
+What is the stast</code></pre>
+
+            <p>This is essentially word salad.</p>
+
+            <h2>Visual Comparison</h2>
+
+            <p>Here's the original PDF page we tested:</p>
+
+            <img src="images/page_22.png" alt="Original PDF page from Pólya-Szegö showing two-column mathematical text" />
+
+            <p>And here's our rendered comparison of what each model produced:</p>
+
+            <img src="images/error_comparison_p1.png" alt="Comparison chart showing Mathpix errors vs correct LLM output" />
+
+            <h2>The Downstream Impact</h2>
+
+            <p>We discovered these errors while building a pipeline to evaluate DeepSeek's mathematical reasoning against the book's solutions. The Mathpix errors propagated directly into our Lean formalization:</p>
+
+            <pre><code>/-
+Polya-Szego Problem 5
+Original problem:
+Someone owns a set of eight weights of $1,1,2, \overline{0}, 10,10,20,50$ grams...
+-/</code></pre>
+
+            <p>The corrupted input would have poisoned any ML training data built from this source.</p>
+
+            <h2>Recommendations</h2>
+
+            <div class="comparison-grid">
+                <div class="success-box">
+                    <strong>For Budget Projects</strong><br>
+                    Gemini 3 Flash @ $0.004/page<br>
+                    6x cheaper, better accuracy
+                </div>
+                <div class="success-box">
+                    <strong>For Quality Focus</strong><br>
+                    GPT-5.2 @ $0.035/page<br>
+                    Best LaTeX structure
+                </div>
+            </div>
+
+            <h2>Conclusion</h2>
+
+            <p>The era of specialized OCR services for mathematical content may be ending. General-purpose LLMs now provide:</p>
+
+            <ul>
+                <li><strong>Better accuracy</strong> &ndash; No critical semantic errors</li>
+                <li><strong>Lower cost</strong> &ndash; 6x cheaper with Gemini Flash</li>
+                <li><strong>Better multi-column handling</strong> &ndash; LLMs understand document structure</li>
+                <li><strong>Flexibility</strong> &ndash; Same API for OCR, analysis, and generation</li>
+            </ul>
+
+            <p>For anyone building mathematical datasets or digitizing academic content, we recommend switching from Mathpix to LLM-based OCR. You would think they would at least use an LLM as a pre-pass...</p>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
+            <p><em>Test book: G. Pólya & G. Szegö, Problems and Theorems in Analysis I (Springer, 1972)</em></p>
+            <p><em>Benchmark code and full results available on request.</em></p>
+        </div>
+    </article>
+
+    <footer class="footer" style="margin-top: 4rem;">
+        <div class="container">
+            <p>&copy; 2025 Igor Rivin. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
