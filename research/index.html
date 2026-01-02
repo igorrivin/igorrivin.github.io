@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Reports | Igor Rivin</title>
+    <meta name="description" content="Technical research reports on AI, mathematics, and formal verification by Igor Rivin.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .research-page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 120px;
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .page-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        .research-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .research-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+        .research-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .research-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .research-card h3 a {
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .research-card h3 a:hover {
+            color: #667eea;
+        }
+        .research-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .research-description {
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+        }
+        .research-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .research-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .research-tag.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V2J6QDNPZZ');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/research/" class="active">Research</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="research-page">
+        <a href="/" class="back-link">&larr; Back to Home</a>
+
+        <h1 class="page-title">Research Reports</h1>
+        <p class="page-subtitle">Technical reports on AI, mathematics, and formal verification</p>
+
+        <div class="research-list">
+            <!-- Polya-Szego Benchmark -->
+            <article class="research-card">
+                <h3><a href="/research/polya-szego-benchmark/">Polya-Szego Evaluation: LLM Reasoning vs Formal Verification</a></h3>
+                <p class="research-meta">January 2, 2026 &bull; Research Report</p>
+                <p class="research-description">
+                    Comprehensive evaluation of frontier LLMs on 320 problems from Polya-Szego's
+                    "Problems and Theorems in Analysis I" (1925). Key finding: 95.4% informal reasoning
+                    accuracy but only 2.8% complete Lean4 proofs. The 30x gap reveals that formal
+                    verification, not understanding, is the bottleneck in AI mathematics.
+                </p>
+                <div class="research-tags">
+                    <span class="research-tag highlight">Lean4</span>
+                    <span class="research-tag highlight">DeepSeek-Prover</span>
+                    <span class="research-tag">Mathematical AI</span>
+                    <span class="research-tag">Formal Verification</span>
+                    <span class="research-tag">Benchmarking</span>
+                </div>
+            </article>
+
+            <!-- Add more research reports here as they come -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Igor Rivin. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/igorrivin" target="_blank">GitHub</a>
+                    <a href="mailto:igor@dimensionreducers.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
