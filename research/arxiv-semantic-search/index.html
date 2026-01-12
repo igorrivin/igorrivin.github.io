@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArXiv Math Semantic Search | Igor Rivin</title>
+    <meta name="description" content="Semantic search and AI-powered Q&A over 700k+ arXiv mathematics papers. Free MVP available.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        .blog-post {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .blog-header {
+            margin-bottom: 3rem;
+            padding-top: 100px;
+        }
+        .blog-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .blog-meta {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .blog-content h2 {
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .blog-content h3 {
+            font-size: 1.35rem;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .blog-content p {
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            color: #333;
+        }
+        .blog-content ul, .blog-content ol {
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            color: #333;
+        }
+        .blog-content li {
+            margin-bottom: 0.5rem;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .highlight-box p {
+            color: rgba(255,255,255,0.95);
+        }
+        .highlight-box a {
+            color: white;
+            font-weight: 600;
+        }
+        .warning-box {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success-box {
+            background: #f0fff4;
+            border-left: 4px solid #38a169;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tech-box {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .try-it-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .try-it-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V2J6QDNPZZ');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/research/">Research</a>
+                    <a href="/blog/">Blog</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <article class="blog-post">
+        <a href="/" class="back-link">&larr; Back to Home</a>
+
+        <header class="blog-header">
+            <h1 class="blog-title">ArXiv Math Semantic Search</h1>
+            <p class="blog-subtitle" style="font-size: 1.25rem; color: #555; margin-bottom: 1rem;">
+                AI-Powered Search and Q&A Over 700,000+ Mathematics Papers
+            </p>
+            <p class="blog-meta">January 12, 2026 &bull; Tool Announcement &bull; 5 min read</p>
+        </header>
+
+        <div class="blog-content">
+            <div class="highlight-box">
+                <h3>Try It Now</h3>
+                <p>
+                    The MVP is live and free to use. Ask questions about mathematical research,
+                    search for papers by concept, or explore connections across the arXiv corpus.
+                </p>
+                <a href="https://igor.ngrok.pro" target="_blank" class="try-it-btn">Launch ArXiv Search &rarr;</a>
+            </div>
+
+            <div class="warning-box">
+                <strong>MVP Notice:</strong> This is an early preview. The tool is currently free and
+                unauthenticated, but this will change soon as we add user accounts and usage tracking.
+                Feedback welcome!
+            </div>
+
+            <h2>What Is It?</h2>
+            <p>
+                A semantic search engine over the arXiv mathematics corpus that understands
+                <em>meaning</em>, not just keywords. Ask natural language questions like
+                "What did Rivin prove about hyperbolic geometry?" or "What are recent advances
+                in random matrix theory?" and get relevant papers with AI-synthesized answers.
+            </p>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-value">729K</div>
+                    <div class="stat-label">Papers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">290M</div>
+                    <div class="stat-label">Text Chunks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">LLM Options</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">&lt;1s</div>
+                    <div class="stat-label">Search Time</div>
+                </div>
+            </div>
+
+            <h2>How It Works</h2>
+
+            <h3>1. Paper Processing</h3>
+            <p>
+                We extract full LaTeX source from arXiv papers (not just abstracts), chunk them
+                into meaningful segments, and index both the text and mathematical content.
+                This means you can search for specific theorems, definitions, or proof techniques.
+            </p>
+
+            <h3>2. Hybrid Search</h3>
+            <div class="tech-box">
+                <p style="margin: 0;"><strong>The search pipeline combines two approaches:</strong></p>
+                <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                    <li><strong>Semantic search:</strong> BGE embeddings + pgvector find conceptually similar content</li>
+                    <li><strong>Full-text search:</strong> PostgreSQL GIN indexes for exact author/keyword matches</li>
+                </ul>
+                <p style="margin-bottom: 0; margin-top: 1rem;">
+                    Author queries (e.g., "Tell me about Sarnak's work") automatically use hybrid mode:
+                    full-text to find the author's papers, then vector re-ranking for relevance.
+                </p>
+            </div>
+
+            <h3>3. Multi-LLM Chat</h3>
+            <p>
+                Retrieved chunks are passed to your choice of language model for synthesis:
+            </p>
+            <ul>
+                <li><strong>DeepSeek v3</strong> &ndash; Fast, good at math (default)</li>
+                <li><strong>GPT-5.2</strong> &ndash; OpenAI's latest</li>
+                <li><strong>Claude Sonnet 4.5</strong> &ndash; Anthropic's balanced model</li>
+                <li><strong>Claude Opus 4.5</strong> &ndash; Maximum capability</li>
+            </ul>
+
+            <h2>Example Queries</h2>
+            <div class="success-box">
+                <ul style="margin: 0; padding-left: 1.2rem;">
+                    <li>"What are the main results in geometric group theory from 2024?"</li>
+                    <li>"Explain the connection between random matrices and number theory"</li>
+                    <li>"What did Tao prove about prime gaps?"</li>
+                    <li>"Recent advances in machine learning for theorem proving"</li>
+                    <li>"Compare different approaches to the Riemann hypothesis"</li>
+                </ul>
+            </div>
+
+            <h2>Technical Stack</h2>
+            <div class="tech-box">
+                <ul style="margin: 0; padding-left: 1.2rem;">
+                    <li><strong>Database:</strong> PostgreSQL + pgvector for vector similarity search</li>
+                    <li><strong>Embeddings:</strong> BGE-large-en-v1.5 (1024 dimensions)</li>
+                    <li><strong>Backend:</strong> FastAPI (Python)</li>
+                    <li><strong>LLM APIs:</strong> Novita (DeepSeek), OpenAI, Anthropic</li>
+                    <li><strong>Indexing:</strong> Parallel workers with incremental updates</li>
+                </ul>
+            </div>
+
+            <h2>Current Status</h2>
+            <p>
+                The system is actively indexing papers. Current coverage:
+            </p>
+            <ul>
+                <li><strong>2022-2025:</strong> Fully indexed (~200k papers)</li>
+                <li><strong>2010-2021:</strong> In progress</li>
+                <li><strong>Pre-2010:</strong> Queued</li>
+            </ul>
+            <p>
+                Search works on indexed papers now. Full corpus coverage expected within a few weeks.
+            </p>
+
+            <h2>What's Next</h2>
+            <ul>
+                <li><strong>User authentication:</strong> Supabase integration for accounts and usage tracking</li>
+                <li><strong>Citation graph:</strong> "Papers that cite this" and influence mapping</li>
+                <li><strong>Personalization:</strong> Saved searches, reading lists, alerts</li>
+                <li><strong>API access:</strong> Programmatic search for research tools</li>
+            </ul>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
+            <p style="text-align: center;">
+                <a href="https://igor.ngrok.pro" target="_blank" class="try-it-btn">Try ArXiv Search &rarr;</a>
+            </p>
+
+            <p style="color: #666; font-style: italic; text-align: center; margin-top: 2rem;">
+                Questions or feedback? <a href="mailto:igor@dimensionreducers.com">Get in touch</a>.
+            </p>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Igor Rivin. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/igorrivin" target="_blank">GitHub</a>
+                    <a href="mailto:igor@dimensionreducers.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../script.js"></script>
+</body>
+</html>
