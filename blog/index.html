@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research Reports | Igor Rivin</title>
-    <meta name="description" content="Technical research reports on AI, mathematics, and formal verification by Igor Rivin.">
+    <title>Blog | Igor Rivin</title>
+    <meta name="description" content="Blog posts on AI, mathematics, and formal verification by Igor Rivin.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
     <style>
-        .research-page {
+        .blog-page {
             max-width: 900px;
             margin: 0 auto;
             padding: 2rem;
@@ -26,56 +26,56 @@
             font-size: 1.1rem;
             margin-bottom: 3rem;
         }
-        .research-list {
+        .blog-list {
             display: flex;
             flex-direction: column;
             gap: 2rem;
         }
-        .research-card {
+        .blog-card {
             background: #fff;
             border: 1px solid #e0e0e0;
             border-radius: 12px;
             padding: 2rem;
             transition: box-shadow 0.3s ease, transform 0.2s ease;
         }
-        .research-card:hover {
+        .blog-card:hover {
             box-shadow: 0 8px 30px rgba(0,0,0,0.1);
             transform: translateY(-2px);
         }
-        .research-card h3 {
+        .blog-card h3 {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
         }
-        .research-card h3 a {
+        .blog-card h3 a {
             color: #1a1a1a;
             text-decoration: none;
         }
-        .research-card h3 a:hover {
+        .blog-card h3 a:hover {
             color: #667eea;
         }
-        .research-meta {
+        .blog-meta {
             color: #666;
             font-size: 0.9rem;
             margin-bottom: 1rem;
         }
-        .research-description {
+        .blog-description {
             color: #444;
             line-height: 1.7;
             margin-bottom: 1rem;
         }
-        .research-tags {
+        .blog-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-        .research-tag {
+        .blog-tag {
             background: #f0f0f0;
             color: #555;
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
             font-size: 0.85rem;
         }
-        .research-tag.highlight {
+        .blog-tag.highlight {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
@@ -90,7 +90,7 @@
         }
     </style>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -110,58 +110,68 @@
                 <div class="nav-links">
                     <a href="/#about">About</a>
                     <a href="/#projects">Projects</a>
-                    <a href="/research/" class="active">Research</a>
+                    <a href="/research/">Research</a>
+                    <a href="/blog/" class="active">Blog</a>
                     <a href="/#contact">Contact</a>
                 </div>
             </nav>
         </div>
     </header>
 
-    <main class="research-page">
+    <main class="blog-page">
         <a href="/" class="back-link">&larr; Back to Home</a>
 
-        <h1 class="page-title">Research Reports</h1>
-        <p class="page-subtitle">Technical reports on AI, mathematics, and formal verification</p>
+        <h1 class="page-title">Blog</h1>
+        <p class="page-subtitle">Notes on AI, mathematics, and formal verification</p>
 
-        <div class="research-list">
-            <!-- Polya-Szego + Aristotle -->
-            <article class="research-card">
+        <div class="blog-list">
+            <!-- Aristotle Update -->
+            <article class="blog-card">
                 <h3><a href="/research/polya-szego-aristotle/">Polya-Szego + Aristotle: From 2.8% to 100% Verified Proofs</a></h3>
-                <p class="research-meta">January 12, 2026 &bull; Research Update</p>
-                <p class="research-description">
-                    Follow-up to our initial benchmark: using Aristotle to automatically verify
-                    LLM-generated Lean proofs. 80/80 submissions verified successfully (100% success rate).
-                    Aristotle corrects formalization errors and synthesizes complete, machine-checkable proofs.
-                    Data release: <a href="https://github.com/igorrivin/polya-szego-lean">github.com/igorrivin/polya-szego-lean</a>
+                <p class="blog-meta">January 12, 2026</p>
+                <p class="blog-description">
+                    Using Aristotle to automatically verify LLM-generated Lean proofs from Polya-Szego.
+                    80/80 submissions verified successfully (100% success rate). The "30x gap" between
+                    informal reasoning and formal verification can be bridged with the right tools.
                 </p>
-                <div class="research-tags">
-                    <span class="research-tag highlight">Aristotle</span>
-                    <span class="research-tag highlight">100% Verified</span>
-                    <span class="research-tag">Lean4</span>
-                    <span class="research-tag">Automated Proving</span>
+                <div class="blog-tags">
+                    <span class="blog-tag highlight">Aristotle</span>
+                    <span class="blog-tag highlight">Lean4</span>
+                    <span class="blog-tag">Formal Verification</span>
                 </div>
             </article>
 
             <!-- Polya-Szego Benchmark -->
-            <article class="research-card">
+            <article class="blog-card">
                 <h3><a href="/research/polya-szego-benchmark/">Polya-Szego Evaluation: LLM Reasoning vs Formal Verification</a></h3>
-                <p class="research-meta">January 2, 2026 &bull; Research Report</p>
-                <p class="research-description">
-                    Comprehensive evaluation of frontier LLMs on 320 problems from Polya-Szego's
-                    "Problems and Theorems in Analysis I" (1925). Key finding: 95.4% informal reasoning
-                    accuracy but only 2.8% complete Lean4 proofs. The 30x gap reveals that formal
-                    verification, not understanding, is the bottleneck in AI mathematics.
+                <p class="blog-meta">January 2, 2026</p>
+                <p class="blog-description">
+                    Evaluating frontier LLMs on 320 problems from Polya-Szego's classic text.
+                    Key finding: 95.4% informal reasoning accuracy but only 2.8% complete Lean4 proofs.
+                    The bottleneck in AI mathematics is formalization, not understanding.
                 </p>
-                <div class="research-tags">
-                    <span class="research-tag highlight">Lean4</span>
-                    <span class="research-tag highlight">DeepSeek-Prover</span>
-                    <span class="research-tag">Mathematical AI</span>
-                    <span class="research-tag">Formal Verification</span>
-                    <span class="research-tag">Benchmarking</span>
+                <div class="blog-tags">
+                    <span class="blog-tag highlight">DeepSeek-Prover</span>
+                    <span class="blog-tag">Mathematical AI</span>
+                    <span class="blog-tag">Benchmarking</span>
                 </div>
             </article>
 
-            <!-- Add more research reports here as they come -->
+            <!-- OCR Benchmark -->
+            <article class="blog-card">
+                <h3><a href="/blog/ocr-benchmark/">Math OCR Benchmark: Why Gemini Flash Beats Mathpix</a></h3>
+                <p class="blog-meta">January 1, 2026</p>
+                <p class="blog-description">
+                    Benchmarking Mathpix against LLM-based OCR for mathematical PDFs.
+                    Gemini 3 Flash is 6x cheaper and more accurate for extracting equations from
+                    academic papers and textbooks.
+                </p>
+                <div class="blog-tags">
+                    <span class="blog-tag">OCR</span>
+                    <span class="blog-tag">Gemini</span>
+                    <span class="blog-tag">LaTeX</span>
+                </div>
+            </article>
         </div>
     </main>
 

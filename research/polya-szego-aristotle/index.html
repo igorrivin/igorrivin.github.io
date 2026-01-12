@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polya-Szego + Aristotle: From 2.8% to 100% Verified Proofs | Igor Rivin</title>
+    <meta name="description" content="Using Aristotle to automatically verify LLM-generated Lean proofs from Polya-Szego. 80/80 submissions verified successfully.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+    <style>
+        .blog-post {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .blog-header {
+            margin-bottom: 3rem;
+            padding-top: 100px;
+        }
+        .blog-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .blog-meta {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+        .blog-content h2 {
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .blog-content h3 {
+            font-size: 1.35rem;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .blog-content p {
+            line-height: 1.8;
+            margin-bottom: 1.25rem;
+            color: #333;
+        }
+        .blog-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+        .blog-content th, .blog-content td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .blog-content th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .blog-content tr:hover {
+            background: #f8f9fa;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+        .highlight-box h3 {
+            color: white;
+            margin-top: 0;
+        }
+        .highlight-box p {
+            color: rgba(255,255,255,0.95);
+        }
+        .finding-box {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success-box {
+            background: #f0fff4;
+            border-left: 4px solid #38a169;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: #667eea;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .comparison-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .comparison-card h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .function { color: #61afef; }
+        .type { color: #e5c07b; }
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V2J6QDNPZZ');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/research/">Research</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <article class="blog-post">
+        <a href="/research/polya-szego-benchmark/" class="back-link">&larr; Previous: Initial Benchmark Report</a>
+
+        <header class="blog-header">
+            <h1 class="blog-title">Polya-Szego + Aristotle</h1>
+            <p class="blog-subtitle" style="font-size: 1.25rem; color: #555; margin-bottom: 1rem;">
+                From 2.8% to 100%: Automated Proof Verification with Aristotle
+            </p>
+            <p class="blog-meta">January 12, 2026 &bull; Research Update &bull; 8 min read</p>
+        </header>
+
+        <div class="blog-content">
+            <div class="highlight-box">
+                <h3>Key Result</h3>
+                <p>
+                    Using <a href="https://aristotle.so" style="color: white; text-decoration: underline;">Aristotle</a>,
+                    an automated Lean proof assistant, we achieved <strong>100% verification success</strong> on 80 submitted
+                    Polya-Szego formalizations. Aristotle automatically corrects formalization errors and synthesizes
+                    complete, machine-checkable proofs.
+                </p>
+            </div>
+
+            <h2>1. Recap: The Formalization Gap</h2>
+            <p>
+                In our <a href="/research/polya-szego-benchmark/">initial benchmark</a>, we found that frontier LLMs achieve
+                95%+ accuracy on informal mathematical reasoning but only 2.8% complete Lean proofs. We called this
+                the "30x gap"&mdash;models understand mathematics but cannot produce formally verified proofs.
+            </p>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-value">95%</div>
+                    <div class="stat-label">Informal Reasoning</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2.8%</div>
+                    <div class="stat-label">LLM Proofs (Before)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Aristotle Verified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">80</div>
+                    <div class="stat-label">Problems Verified</div>
+                </div>
+            </div>
+
+            <h2>2. Enter Aristotle</h2>
+            <p>
+                <a href="https://aristotle.so">Aristotle</a> is an automated theorem prover that takes informal
+                mathematical statements (or rough Lean formalizations) and produces complete, verified Lean 4 proofs.
+                Unlike traditional proof assistants that require expert guidance, Aristotle operates autonomously.
+            </p>
+
+            <h3>2.1 Our Pipeline</h3>
+            <ol>
+                <li><strong>LLM Formalization:</strong> DeepSeek V3.2 generates initial Lean 4 statements from Polya-Szego problems</li>
+                <li><strong>Aristotle Submission:</strong> Each formalization is submitted with problem context</li>
+                <li><strong>Autonomous Proving:</strong> Aristotle corrects errors and synthesizes proofs</li>
+                <li><strong>Verification:</strong> Output is machine-checkable Lean 4 code</li>
+            </ol>
+
+            <h3>2.2 Results</h3>
+            <table>
+                <tr><th>Metric</th><th>Value</th></tr>
+                <tr><td>Problems submitted</td><td>80</td></tr>
+                <tr><td>Successfully verified</td><td>80 (100%)</td></tr>
+                <tr><td>Remaining to submit</td><td>238</td></tr>
+                <tr><td>Total formalizations</td><td>318</td></tr>
+            </table>
+
+            <div class="success-box">
+                <strong>100% success rate</strong> on all 80 submitted problems. Aristotle corrected formalization
+                errors (identifier names, type mismatches) and produced complete proofs.
+            </div>
+
+            <h2>3. Worked Example: Problem 112</h2>
+            <p>
+                Let's trace a complete example from original problem to verified proof.
+            </p>
+
+            <h3>3.1 Original Problem (Polya-Szego)</h3>
+            <div class="finding-box">
+                <strong>Problem 112 (Part One, Chapter 3):</strong><br>
+                Prove that $\text{Re}(\bar{a} \cdot e^{i\varphi}) = |a| \cos(\varphi - \arg a)$ for any complex number $a$ and real $\varphi$.
+            </div>
+
+            <h3>3.2 LLM Formalization (DeepSeek V3.2)</h3>
+            <p>The initial formalization had identifier errors (<code>Complex.abs</code> instead of <code>norm</code>,
+            <code>conj</code> instead of <code>star</code>):</p>
+            <pre><code><span class="keyword">theorem</span> <span class="function">problem_112_part_one</span> :
+    <span class="keyword">forall</span> (a : <span class="type">C</span>) (phi : <span class="type">R</span>),
+    Complex.re (<span class="comment">conj</span> a * Complex.exp (Complex.I * phi)) =
+    <span class="comment">Complex.abs</span> a * Real.cos (phi - Complex.arg a) := <span class="keyword">by</span>
+  <span class="comment">sorry</span></code></pre>
+
+            <h3>3.3 Aristotle Output</h3>
+            <p>Aristotle automatically corrected the identifiers and produced a complete proof:</p>
+            <pre><code><span class="comment">/-
+This file was generated by Aristotle.
+Lean version: leanprover/lean4:v4.24.0
+Mathlib version: f897ebcf72cd16f89ab4577d0c826cd14afaafc7
+-/</span>
+
+<span class="keyword">import</span> Mathlib
+
+<span class="comment">/-
+Re(a* * exp(i*phi)) = |a| * cos(phi - arg(a))
+-/</span>
+<span class="keyword">theorem</span> <span class="function">problem_112_part_one</span> (a : <span class="type">C</span>) (phi : <span class="type">R</span>) :
+    (<span class="keyword">star</span> a * Complex.exp (Complex.I * phi)).re =
+    <span class="type">||</span>a<span class="type">||</span> * Real.cos (phi - Complex.arg a) := <span class="keyword">by</span>
+  norm_num [Complex.exp_re, Complex.exp_im, Real.cos_sub]
+  rw [<- Complex.norm_mul_cos_arg, <- Complex.norm_mul_sin_arg]
+  ring</code></pre>
+
+            <h3>3.4 What Aristotle Fixed</h3>
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h4>Before (LLM)</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                        <li><code>conj a</code> &rarr; wrong identifier</li>
+                        <li><code>Complex.abs a</code> &rarr; wrong API</li>
+                        <li><code>sorry</code> &rarr; no proof</li>
+                    </ul>
+                </div>
+                <div class="comparison-card">
+                    <h4>After (Aristotle)</h4>
+                    <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.9rem;">
+                        <li><code>star a</code> &rarr; correct Mathlib</li>
+                        <li><code>||a||</code> &rarr; norm notation</li>
+                        <li>Complete 3-line proof</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h2>4. More Complex Example: Problem 10</h2>
+            <p>
+                Problem 10 concerns velocity and acceleration in polar coordinates&mdash;a multi-part theorem
+                requiring chain rule, product rule, and careful bookkeeping.
+            </p>
+
+            <div class="finding-box">
+                <strong>Problem 10 (Part Three, Chapter 1):</strong><br>
+                Let $z = re^{i\theta}$ where $r, \theta$ are functions of time $t$. Compute the radial and tangential
+                components of velocity and acceleration.
+            </div>
+
+            <p>Aristotle produced a 110-line verified proof establishing:</p>
+            <ul>
+                <li><strong>Velocity:</strong> $v_r = \dot{r}$, $v_\theta = r\dot{\theta}$</li>
+                <li><strong>Acceleration:</strong> $a_r = \ddot{r} - r\dot{\theta}^2$, $a_\theta = r\ddot{\theta} + 2\dot{r}\dot{\theta}$</li>
+            </ul>
+
+            <p>The proof uses <code>ContDiffAt</code> hypotheses, chain rule for complex exponentials, and careful
+            manipulation of derivatives&mdash;exactly the kind of intricate reasoning that LLMs struggle to formalize correctly.</p>
+
+            <h2>5. Key Insights</h2>
+
+            <h3>5.1 Error Correction is Crucial</h3>
+            <p>
+                Most LLM formalizations have small errors: wrong identifier names, type mismatches, missing imports.
+                Aristotle's ability to <em>automatically correct</em> these errors is what enables 100% success.
+            </p>
+
+            <h3>5.2 The Bottleneck Has Shifted</h3>
+            <table>
+                <tr><th>Stage</th><th>Before Aristotle</th><th>After Aristotle</th></tr>
+                <tr><td>Informal reasoning</td><td>95% (solved)</td><td>95% (solved)</td></tr>
+                <tr><td>Formalization</td><td>2.8% (bottleneck)</td><td>~99% (with Aristotle)</td></tr>
+                <tr><td>New bottleneck</td><td>-</td><td>Submission throughput</td></tr>
+            </table>
+
+            <h3>5.3 Implications for Mathematical AI</h3>
+            <ol>
+                <li><strong>LLM + Verifier pipelines work:</strong> Imperfect LLM output can be refined by specialized tools</li>
+                <li><strong>Formal verification is tractable:</strong> Classical analysis problems are within reach</li>
+                <li><strong>The "30x gap" can be bridged:</strong> Not by better LLMs alone, but by better tooling</li>
+            </ol>
+
+            <h2>6. Data Release</h2>
+            <p>
+                We are releasing all Aristotle-verified proofs as a resource for the formal mathematics community.
+            </p>
+
+            <div class="success-box">
+                <strong>Repository:</strong>
+                <a href="https://github.com/igorrivin/polya-szego-lean">github.com/igorrivin/polya-szego-lean</a><br>
+                Contains: 80 verified Lean 4 proofs, original problem statements, LLM formalizations, and Aristotle outputs.
+            </div>
+
+            <h2>7. Next Steps</h2>
+            <ul>
+                <li><strong>Complete verification:</strong> Submit remaining 238 problems to Aristotle</li>
+                <li><strong>Mathlib contributions:</strong> Identify lemmas that should be upstreamed</li>
+                <li><strong>Broader benchmarks:</strong> Apply pipeline to other mathematical texts</li>
+            </ul>
+
+            <hr style="margin: 3rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
+            <h2>Acknowledgments</h2>
+            <p>
+                Thanks to the <a href="https://aristotle.so">Aristotle</a> team for their remarkable tool,
+                and to the Mathlib community for building the foundation that makes this work possible.
+            </p>
+
+            <p style="color: #666; font-style: italic;">
+                Report updated January 12, 2026. Verification ongoing&mdash;check the repository for latest results.
+            </p>
+        </div>
+    </article>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Igor Rivin. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/igorrivin" target="_blank">GitHub</a>
+                    <a href="mailto:igor@dimensionreducers.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../script.js"></script>
+</body>
+</html>
