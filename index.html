@@ -229,17 +229,53 @@
                     </div>
                 </div>
 
-                <!-- Polya-Szego + Aristotle Update -->
+                <!-- Formalize This! Tool -->
                 <div class="project-card featured-project">
                     <div class="project-header">
-                        <h3>Polya-Szego + Aristotle: 100% Verified Proofs</h3>
+                        <h3>Formalize This! &mdash; Lean 4 Formalization Engine</h3>
                         <div class="project-status">
                             <span class="status-badge cutting-edge">New</span>
+                            <span class="status-badge live">Live</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://formalize.dimensionreducers.ai" target="_blank" class="project-link primary">Try It</a>
+                            <a href="https://gist.github.com/igorrivin/3d15a2ba02a6ef09a5ddee196805348e" target="_blank" class="project-link">Analysis</a>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Paste any mathematical statement, get a Lean 4 formalization&mdash;and optionally a compiler-verified proof.
+                        An agentic pipeline achieves 97% semantic accuracy on the Polya-Szego benchmark (823 problems),
+                        up from 85% for the best single model and 67% for dedicated theorem provers.
+                        The key insight: proof verification and semantic verification are orthogonal capabilities,
+                        and multi-agent reconciliation bridges the gap.
+                    </p>
+                    <div class="project-highlights">
+                        <div class="highlight">97% Semantic Accuracy</div>
+                        <div class="highlight">823 Problems Tested</div>
+                        <div class="highlight">Compiler-Verified Proofs</div>
+                        <div class="highlight">Try It Live</div>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag featured">Lean4</span>
+                        <span class="tech-tag featured">Agentic AI</span>
+                        <span class="tech-tag">GPT-5.4</span>
+                        <span class="tech-tag">Gemini 3.1</span>
+                        <span class="tech-tag">Aristotle</span>
+                        <span class="tech-tag">Mathlib</span>
+                    </div>
+                </div>
+
+                <!-- Polya-Szego + Aristotle: Semantic Drift Discovery -->
+                <div class="project-card featured-project">
+                    <div class="project-header">
+                        <h3>When Theorem Provers Prove the Wrong Theorem</h3>
+                        <div class="project-status">
+                            <span class="status-badge cutting-edge">Research</span>
                             <span class="status-badge live">Report</span>
                         </div>
                         <div class="project-links">
-                            <a href="research/polya-szego-aristotle/" class="project-link primary">Read Report</a>
-                            <a href="https://github.com/igorrivin/polya-szego-lean" target="_blank" class="project-link">Data</a>
+                            <a href="https://gist.github.com/igorrivin/3d15a2ba02a6ef09a5ddee196805348e" target="_blank" class="project-link primary">Read Report</a>
+                            <a href="https://github.com/igorrivin/polya-szego-benchmark" target="_blank" class="project-link">Data</a>
                         </div>
                     </div>
                     <div style="display: flex; gap: 1rem; align-items: flex-start;">
@@ -247,17 +283,18 @@
                              alt="Aristotle puzzling over Polya-Szego"
                              style="width: 150px; border-radius: 8px; flex-shrink: 0;">
                         <p class="project-description" style="margin: 0;">
-                            Follow-up to our benchmark: using <a href="https://harmonic.fun">Aristotle</a> to automatically verify
-                            LLM-generated Lean proofs. 80/80 submissions verified successfully (100% success rate).
-                            Aristotle corrects formalization errors and synthesizes complete, machine-checkable proofs.
-                            The "30x gap" can be bridged with the right tools.
+                            <a href="https://harmonic.fun">Aristotle</a> proves 97.6% of theorems it attempts&mdash;but
+                            only 67% are semantically correct. It proves the wrong theorem a third of the time,
+                            fluently and confidently. Our agentic pipeline detects and corrects this drift,
+                            pushing accuracy from 67% to 97%. Includes concrete examples of semantic drift and
+                            a public benchmark of 823 problems across 8 systems.
                         </p>
                     </div>
                     <div class="project-highlights">
-                        <div class="highlight">100% Verification Success</div>
-                        <div class="highlight">80 Complete Proofs</div>
-                        <div class="highlight">Auto Error Correction</div>
-                        <div class="highlight">Open Data Release</div>
+                        <div class="highlight">67% &rarr; 97% Accuracy</div>
+                        <div class="highlight">823 Problems</div>
+                        <div class="highlight">8 Models Compared</div>
+                        <div class="highlight">Public Benchmark</div>
                     </div>
                     <div class="project-tech">
                         <span class="tech-tag featured">Aristotle</span>
@@ -271,34 +308,35 @@
                 <!-- Polya-Szego Formalization Benchmark -->
                 <div class="project-card featured-project">
                     <div class="project-header">
-                        <h3>Polya-Szego Formalization Benchmark: 7 LLMs Compared</h3>
+                        <h3>Polya-Szego Formalization Benchmark: 8 Models Compared</h3>
                         <div class="project-status">
-                            <span class="status-badge cutting-edge">New</span>
+                            <span class="status-badge cutting-edge">Updated</span>
                             <span class="status-badge live">Benchmark</span>
                         </div>
                         <div class="project-links">
                             <a href="https://gist.github.com/igorrivin/3c97f3eac45eef918319b9892e297bc3" target="_blank" class="project-link primary">Read Report</a>
+                            <a href="https://github.com/igorrivin/polya-szego-benchmark" target="_blank" class="project-link">Data</a>
                         </div>
                     </div>
                     <p class="project-description">
-                        Head-to-head comparison of 7 frontier LLMs on Lean 4 formalization of 222 clean Polya-Szego problems,
-                        judged by Claude Opus 4.6. GPT-5.4 and Gemini 3.1 Pro lead at ~38%, while reasoning-heavy models
-                        (DeepSeek R1, MiniMax) score under 10%&mdash;extended chain-of-thought appears to hurt formalization
-                        precision. Includes detailed failure analysis with off-by-one errors, type coercion pitfalls,
-                        and problems that defeat all 7 models.
+                        Head-to-head comparison of 8 systems on Lean 4 formalization of 823 Polya-Szego problems,
+                        judged by Claude Opus 4.6. GPT-5.4 leads at 85%, Gemini at 74%, Aristotle at 67%,
+                        Claude at 51%. Chinese models (DeepSeek, GLM, MiniMax, Kimi) remain below 33%&mdash;a
+                        persistent Lean 4 training gap. Updated from v1 with 4x more problems and a critical
+                        collision bugfix.
                     </p>
                     <div class="project-highlights">
-                        <div class="highlight">222 Clean Problems</div>
-                        <div class="highlight">7 Models Compared</div>
-                        <div class="highlight">38% Best Accuracy</div>
-                        <div class="highlight">Failure Taxonomy</div>
+                        <div class="highlight">823 Problems</div>
+                        <div class="highlight">8 Models Compared</div>
+                        <div class="highlight">85% Best Single Model</div>
+                        <div class="highlight">Public Dataset</div>
                     </div>
                     <div class="project-tech">
                         <span class="tech-tag featured">Lean4</span>
                         <span class="tech-tag featured">GPT-5.4</span>
                         <span class="tech-tag">Gemini 3.1</span>
                         <span class="tech-tag">Claude Opus</span>
-                        <span class="tech-tag">DeepSeek R1</span>
+                        <span class="tech-tag">Aristotle</span>
                         <span class="tech-tag">Formalization</span>
                     </div>
                 </div>
