@@ -265,6 +265,40 @@
                     </div>
                 </div>
 
+                <!-- Polya: Math Prompt Validator -->
+                <div class="project-card featured-project">
+                    <div class="project-header">
+                        <h3>Polya &mdash; Math Prompt Validator</h3>
+                        <div class="project-status">
+                            <span class="status-badge cutting-edge">New</span>
+                            <span class="status-badge live">Live</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://polya.dimensionreducers.ai" target="_blank" class="project-link primary">Try It</a>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Frontier LLMs silently fill in missing definitions and produce confident wrong answers on under-specified math problems&mdash;a failure mode invisible to standard benchmark scoring.
+                        Polya inserts a fast validator step before the solver: it catches undefined symbols, ambiguous conventions, and unattached figures, asks a single plain-English clarifying question, and emits a cleaned-up prompt you can paste into any strong model.
+                        Pro mode runs three validators (Claude Opus 4.7, GPT-5.5 high, Sonnet 4.6) in parallel and reconciles their findings.
+                        arXiv-cited references are auto-fetched and inlined.
+                    </p>
+                    <div class="project-highlights">
+                        <div class="highlight">3-Validator Consensus</div>
+                        <div class="highlight">Auto arXiv Lookup</div>
+                        <div class="highlight">~15s Standard Mode</div>
+                        <div class="highlight">Free in Beta</div>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag featured">Claude Opus 4.7</span>
+                        <span class="tech-tag featured">GPT-5.5</span>
+                        <span class="tech-tag">Sonnet 4.6</span>
+                        <span class="tech-tag">CometAPI</span>
+                        <span class="tech-tag">Gradio</span>
+                        <span class="tech-tag">Tavily</span>
+                    </div>
+                </div>
+
                 <!-- Polya-Szego + Aristotle: Semantic Drift Discovery -->
                 <div class="project-card featured-project">
                     <div class="project-header">
@@ -387,7 +421,7 @@
                             <span class="status-badge live">Live Database</span>
                         </div>
                         <div class="project-links">
-                            <a href="https://arxiv-audit-web.vercel.app" target="_blank" class="project-link primary">Live App</a>
+                            <a href="https://audit.dimensionreducers.ai" target="_blank" class="project-link primary">Live App</a>
                             <a href="https://github.com/igorrivin/arxiv-audit" target="_blank" class="project-link">GitHub</a>
                         </div>
                     </div>
@@ -412,7 +446,42 @@
                         <span class="tech-tag">PostgreSQL</span>
                         <span class="tech-tag">Python</span>
                         <span class="tech-tag">GNU Parallel</span>
-                        <span class="tech-tag">Vercel</span>
+                        <span class="tech-tag">ngrok</span>
+                    </div>
+                </div>
+
+                <!-- Citation Analyzer -->
+                <div class="project-card featured-project">
+                    <div class="project-header">
+                        <h3>Citation Analyzer &mdash; Academic Pecking Order</h3>
+                        <div class="project-status">
+                            <span class="status-badge cutting-edge">Live</span>
+                            <span class="status-badge live">Free Tool</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="https://citations.dimensionreducers.ai" target="_blank" class="project-link primary">Try It</a>
+                            <a href="https://github.com/igorrivin/citation-analyzer" target="_blank" class="project-link">GitHub</a>
+                        </div>
+                    </div>
+                    <p class="project-description">
+                        Given a researcher's name, pulls citation metrics from OpenAlex, infers sub-fields, and
+                        contextualizes everything against empirical benchmarks &mdash; accounting for field differences,
+                        research breadth, and citation distribution shape. Computes per-topic h-index decomposition,
+                        sub-field percentile ranks from live CDFs, and distribution diagnostics (Gini, spikiness,
+                        top-k concentration) that reveal whether impact comes from one blockbuster or sustained output.
+                    </p>
+                    <div class="project-highlights">
+                        <div class="highlight">Per-Topic h-Index Decomposition</div>
+                        <div class="highlight">Live Sub-Field Percentile Ranks</div>
+                        <div class="highlight">Citation Distribution Shape Analysis</div>
+                        <div class="highlight">Research Breadth Metrics</div>
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-tag featured">OpenAlex API</span>
+                        <span class="tech-tag featured">Bibliometrics</span>
+                        <span class="tech-tag">Gradio</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Information Theory</span>
                     </div>
                 </div>
 
