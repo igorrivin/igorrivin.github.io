@@ -126,7 +126,17 @@ jobs:
               with urllib.request.urlopen(req, timeout=120) as resp:
                   data = json.loads(resp.read())
 
-              return data["output_text"].strip()
+              # output_text is an SDK convenience property — not present in raw JSON.
+              # Walk output[] for message blocks and extract text content.
+              text_parts = []
+              for item in data.get("output", []):
+                  if item.get("type") == "message":
+                      for part in item.get("content", []):
+                          if part.get("type") == "output_text":
+                              text_parts.append(part["text"])
+              if not text_parts:
+                  raise ValueError(f"No text output in response. Keys: {list(data.keys())}. Output: {data.get('output')}")
+              return " ".join(text_parts).strip()
 
           def post_to_zapier(post_text: str, webhook_url: str) -> None:
               char_count = len(post_text)
