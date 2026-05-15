@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontier LLMs Refuse Too Little — Igor Rivin</title>
+    <meta name="description" content="A short essay on a failure mode in frontier LLMs discovered while analyzing advanced mathematics benchmarks, and the tool we built to do something about it.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
+
+    <style>
+        .post-page {
+            max-width: 740px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            padding-top: 120px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+
+        .post-header {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid #e8e8e8;
+            padding-bottom: 2rem;
+        }
+        .post-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-bottom: 0.75rem;
+            color: #1a1a1a;
+        }
+        .post-subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+        }
+        .post-meta {
+            color: #888;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .post-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .post-tag {
+            background: #f0f0f0;
+            color: #555;
+            padding: 0.2rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+        }
+        .post-tag.highlight {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .post-body {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #2d2d2d;
+        }
+        .post-body h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+            color: #1a1a1a;
+        }
+        .post-body p { margin-bottom: 1.4rem; }
+        .post-body strong { font-weight: 600; }
+
+        .post-body blockquote {
+            border-left: 3px solid #667eea;
+            margin: 1.5rem 0;
+            padding: 0.75rem 1.25rem;
+            background: #f8f8ff;
+            color: #444;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+        }
+        .post-body blockquote p { margin-bottom: 0; }
+
+        .post-body hr {
+            border: none;
+            border-top: 1px solid #e0e0e0;
+            margin: 2.5rem 0;
+        }
+
+        .finding-block {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem 1.75rem;
+            margin: 1.5rem 0;
+        }
+        .finding-block .finding-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #667eea;
+            margin-bottom: 0.6rem;
+        }
+        .finding-block p { margin-bottom: 0; }
+
+        .stat-callout {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border-left: 4px solid #667eea;
+            border-radius: 0 10px 10px 0;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            margin: 2.5rem 0;
+            text-align: center;
+        }
+        .cta-box p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            opacity: 0.95;
+        }
+        .cta-box a {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            font-weight: 700;
+            padding: 0.65rem 1.75rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+        .cta-box a:hover { opacity: 0.9; }
+
+        .post-footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e8e8e8;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .post-footer a { color: #667eea; }
+    </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V2J6QDNPZZ');
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/research/">Research</a>
+                    <a href="/blog/" class="active">Blog</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="post-page">
+        <a href="/blog/" class="back-link">&larr; Back to Blog</a>
+
+        <header class="post-header">
+            <h1 class="post-title">Frontier LLMs Refuse Too Little,<br>or RLHF Considered Harmful</h1>
+            <p class="post-subtitle">A short essay on something I noticed while analyzing advanced mathematics benchmarks, and the tool we built to do something about it.</p>
+            <div class="post-meta">
+                <span>Igor Rivin</span>
+                <span>May 15, 2026</span>
+            </div>
+            <div class="post-tags">
+                <span class="post-tag highlight">LLMs</span>
+                <span class="post-tag highlight">Research Mathematics</span>
+                <span class="post-tag">RLHF</span>
+                <span class="post-tag">Benchmarking</span>
+                <span class="post-tag">Polya</span>
+            </div>
+        </header>
+
+        <article class="post-body">
+
+            <p>The complaint most often levelled at frontier LLMs is that they refuse too much. They won't write the joke, won't speculate, won't quote the text. The cultural consensus on the alignment side is that models have been trained, by reinforcement learning from human feedback, to err on the side of declining the request.</p>
+
+            <p>In research mathematics I have noticed the opposite. The frontier models &mdash; GPT-5.5, Claude Opus 4.7, Gemini 3.1 Pro, all the names &mdash; refuse far too <em>little</em>. Specifically, when a prompt is malformed, they don't refuse; they fill in the blanks and produce a confident wrong answer.</p>
+
+            <p>This is a different failure mode from the standard one and it has been hiding in plain sight, because it only shows up when prompts are deliberately or accidentally under-specified. Casual chat is robust against it. Research mathematics is not.</p>
+
+            <p>I'll show three pieces of evidence, then describe what we built to work around the problem.</p>
+
+            <h2>The evidence</h2>
+
+            <div class="finding-block">
+                <div class="finding-label">Finding 1 &mdash; Silent typo patching</div>
+                <p>Consider a math problem that begins with the phrase</p>
+                <blockquote><p>Compute the order of the monodromy group of $dY/dz = AY$, where (giant matrix expression).</p></blockquote>
+                <p>A diligent human reader halts, and asks: what does the expression refer to? $A$? $\log A$? $A^2$? Something else entirely? There is a high probability that the expression refers to $A$, but until this is known with certainty, we cannot begin to solve the problem. A very sloppy human reader infers, without a moment's hesitation, that the matrix expression is the value of $A$. The author wrote "where" and forgot the "$A =$". The prompt has a typo. The sloppy solver patches it silently.</p>
+                <p>A frontier LLM does the same thing as a sloppy solver. It silently patches the typo, treats the matrix as $A$, and computes a monodromy order. Sometimes the answer is right; sometimes it is wrong; either way the failure mode is invisible. The model never tells you that it filled in a definition. From the outside it looks like the model solved the problem. From the inside it solved <em>a</em> problem, one whose precise statement it constructed on the fly.</p>
+            </div>
+
+            <div class="finding-block">
+                <div class="finding-label">Finding 2 &mdash; Extended thinking amplifies the problem</div>
+                <p>Consider a more substantive case:</p>
+                <blockquote>
+                    <p>Let $C$ be a smooth projective curve. Consider the moduli space of stable pairs $(s, E)$, where $E$ is a torsion-free coherent sheaf of rank $r$ on $C$ and $s\colon \mathcal{O}_C^r \to E$ has zero-dimensional cokernel of length $\ell$. What is the dimension of the fiber of the natural projection to $\mathrm{Hilb}^\ell(C)$?</p>
+                </blockquote>
+                <p>This prompt is under-specified in at least four ways that affect the answer. "Stable pairs" has at least three inequivalent definitions in the literature (Le Potier, Bradlow, Pandharipande&ndash;Thomas). The map "natural projection" is referenced but never constructed. The base field is unstated. The genus of $C$ is unstated.</p>
+                <p>We ran the same prompt through nine different validator models. Eight of them behaved like the diligent reader: they produced substantive lists of these defects and asked a clarifying question, refusing to commit to an answer until the prompt was made precise. The ninth &mdash; the one model that declared the prompt well-posed and emitted a "solution" &mdash; behaved like the sloppy reader, only with more resources at its disposal. It was the frontier model running at the <em>highest</em> reasoning effort. Extended thinking, in that one case, did not surface the ambiguity. It used the thinking budget to silently resolve the ambiguity by picking a default reading, and then answered.</p>
+                <p>This is the inverse of what you would naively expect from "deeper reasoning." More thinking, in this experiment, produced <em>more</em> sloppy-reader behavior, not less.</p>
+            </div>
+
+            <div class="finding-block">
+                <div class="finding-label">Finding 3 &mdash; More than half of benchmark problems are not well-posed</div>
+                <p>We took close to 200 problems from a curated commercial research-mathematics benchmark &mdash; problems that had been written by mathematicians, reviewed by other mathematicians, and accepted by the final model developers as valid. We ran each one through a separate well-formedness validator (no relation to the solver path).</p>
+            </div>
+
+            <div class="stat-callout">
+                Roughly more than half of the problems were flagged as not well-posed. Of those flagged, about a third were <em>fatal</em> &mdash; a required symbol or piece of data was missing entirely, and the problem cannot be answered as stated.
+            </div>
+
+            <p>Another half were <em>substantive</em> &mdash; ambiguous conventions, missing parameters, unspecified equivalence relations. The remaining minority were cosmetic typos or "intentional under-specification" where the curator was implicitly asking for the tightest-known bound rather than a unique number.</p>
+
+            <p>In <em>no case</em>, looking at the data, did the original solver answer "I cannot answer this; please clarify." It always answered. Sometimes the answer matched the curator's intent. Sometimes it didn't. The benchmark scoring methodology cannot tell the two cases apart, because it scores "wrong" identically to "answered a different question than the curator was asking."</p>
+
+            <h2>Why this happens</h2>
+
+            <p>Three mechanisms compound:</p>
+
+            <p><strong>RLHF rewards helpfulness.</strong> Annotators rate responses that produce an answer above responses that ask a clarifying question, almost regardless of context. A model that refuses on ambiguous input scores lower than a model that picks a plausible reading and proceeds. The reward signal is the same in research-mathematics contexts as in casual chat &mdash; but the appropriate behavior is very different.</p>
+
+            <p><strong>Structured output (JSON-mode and friends) is a commitment device, not an escape hatch.</strong> This was a surprising negative result for us. When we wrapped the solver in a JSON schema with a free-form <code>final_answer</code> field &mdash; exactly the shape that should allow refusal as a value of <code>final_answer</code> &mdash; the refusal rate <em>dropped</em> relative to free-form bare prompting. The schema, by demanding a value for every field, pressures the model to commit to a number rather than to express uncertainty. Practitioners using structured outputs for evaluation pipelines may be silently suppressing the very behavior they think they are encouraging.</p>
+
+            <p><strong>Deeper reasoning amplifies DWIM rather than suppressing it.</strong> At higher reasoning effort the model uses its thinking budget to <em>resolve</em> ambiguity by picking standard conventions, rather than to <em>flag</em> the ambiguity. The Opus-4.7-thinking case described above is one clean example; the same pattern shows up across other models when the reasoning effort knob is turned up.</p>
+
+            <p>These mechanisms are not unalignment; they are alignment working as designed for one set of use cases and producing the wrong behavior for another. Research-grade mathematics is the wrong use case. Precision is the point. Filling in undefined symbols silently is not a feature.</p>
+
+            <h2>What we built</h2>
+
+            <p>Polya is a small validator that you can use today, free, at <a href="https://polya.dimensionreducers.ai"><strong>polya.dimensionreducers.ai</strong></a>. The architecture is intentionally simple.</p>
+
+            <p>You paste a math problem. Polya runs a fast well-formedness pass on it &mdash; using whichever validator you pick from a dropdown, or in "Pro" mode running three validators in parallel and reconciling their findings. If the problem is well-formed, Polya gives you back a cleaned-up version of your prompt. If it isn't, Polya asks you a single plain-English clarifying question &mdash; what's $A$? what stability condition? which base field? &mdash; and lets you answer. Most clarification loops resolve in one or two turns, because most users have no idea their prompt is malformed and being told it is, is most of the fix.</p>
+
+            <p>Polya does not solve the problem. It produces a fully-specified version of your prompt that you can paste into the strong solver of your choice &mdash; Claude, ChatGPT, Gemini, whatever &mdash; and get back an answer that is at least addressed to the problem you actually meant to ask. The economics work because validation is cheap; the expensive part stays under your control.</p>
+
+            <p>Polya also looks up cited references. If you put an arXiv identifier in your prompt, Polya fetches the abstract and inlines it into the cleaned-up version, so downstream solvers &mdash; even ones whose training cutoff predates the paper &mdash; have the relevant context. Web search via a separate API handles named theorems and topics. Everything Polya retrieved is shown in a panel, so you can verify the citation matches before accepting the cleaned prompt.</p>
+
+            <div class="cta-box">
+                <p>Try Polya on one of your harder prompts &mdash; free during beta.</p>
+                <a href="https://polya.dimensionreducers.ai" target="_blank">Open Polya &rarr;</a>
+            </div>
+
+            <h2>What we haven't shown yet</h2>
+
+            <p>This is a short essay. The full empirical work is in progress, and the preprint will appear on arXiv in a few weeks. Specifically not yet pinned down: cross-model generalization of the schema-suppresses-refusal effect, an adversarial study where well-formed problems are deliberately corrupted to measure detection rate, and manual adjudication of the claimed "reference-wrong" cases by a second mathematician. Treat the numbers in this essay as the headline rather than the complete picture.</p>
+
+            <h2>A friendly suggestion</h2>
+
+            <p>If you work for one of the AI-training-data companies that builds curated math benchmarks: try Polya on one of your harder prompts. Genuinely try. Pick something complex and reviewed.</p>
+
+            <p>If the validator declares it well-formed: congratulations.</p>
+
+            <p>If it doesn't: that's worth a minute of your time.</p>
+
+            <hr>
+
+            <p><em>Polya is live at <a href="https://polya.dimensionreducers.ai">polya.dimensionreducers.ai</a>. The full paper is coming.</em></p>
+
+        </article>
+
+        <footer class="post-footer">
+            <p>Igor Rivin &mdash; <a href="mailto:igor@dimensionreducers.com">igor@dimensionreducers.com</a> &mdash; <a href="https://dimensionreducers.ai">dimensionreducers.ai</a></p>
+        </footer>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Igor Rivin. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/igorrivin" target="_blank">GitHub</a>
+                    <a href="mailto:igor@dimensionreducers.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../script.js"></script>
+</body>
+</html>

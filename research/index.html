@@ -111,6 +111,7 @@
                     <a href="/#about">About</a>
                     <a href="/#projects">Projects</a>
                     <a href="/research/" class="active">Research</a>
+                    <a href="/blog/">Blog</a>
                     <a href="/#contact">Contact</a>
                 </div>
             </nav>
@@ -124,6 +125,29 @@
         <p class="page-subtitle">Technical reports on AI, mathematics, and formal verification</p>
 
         <div class="research-list">
+
+            <!-- Polya RLHF Essay — May 2026 (newest first) -->
+            <article class="research-card">
+                <h3><a href="/blog/polya-rlhf/">Frontier LLMs Refuse Too Little, or RLHF Considered Harmful</a></h3>
+                <p class="research-meta">May 15, 2026 &bull; Essay</p>
+                <p class="research-description">
+                    In research mathematics, frontier LLMs exhibit the <em>opposite</em> of the standard alignment complaint:
+                    they refuse too little. When prompts are malformed they silently fill in missing definitions and emit
+                    confident wrong answers. Over half of problems in a curated commercial benchmark were flagged as not
+                    well-posed by our validator &mdash; and no solver ever objected. Three mechanisms compound: RLHF reward
+                    bias toward helpfulness, structured-output schemas that suppress refusal, and extended thinking that
+                    resolves rather than flags ambiguity. Introduces <a href="https://polya.dimensionreducers.ai">Polya</a>,
+                    a free well-formedness validator with 3-model consensus mode.
+                </p>
+                <div class="research-tags">
+                    <span class="research-tag highlight">New</span>
+                    <span class="research-tag highlight">RLHF</span>
+                    <span class="research-tag">Research Mathematics</span>
+                    <span class="research-tag">Benchmarking</span>
+                    <span class="research-tag">Polya</span>
+                </div>
+            </article>
+
             <!-- ArXiv Semantic Search -->
             <article class="research-card">
                 <h3><a href="/research/arxiv-semantic-search/">ArXiv Math Semantic Search</a></h3>
