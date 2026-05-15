@@ -1,0 +1,176 @@
+name: Blog post → LinkedIn
+
+# Triggers on any push to main that adds or modifies a file
+# matching blog/*/index.html.  Also has a manual trigger
+# (workflow_dispatch) so you can fire it for any past post.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "blog/*/index.html"
+  workflow_dispatch:
+    inputs:
+      post_path:
+        description: "Path to the blog post HTML file (e.g. blog/polya-rlhf/index.html)"
+        required: true
+        default: "blog/polya-rlhf/index.html"
+
+jobs:
+  post-to-linkedin:
+    runs-on: ubuntu-latest
+    steps:
+
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2          # need parent commit to diff against
+
+      # ── 2. Detect which blog post(s) were added/modified ──────────────────
+      - name: Detect new or modified blog posts
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Manual trigger: use the provided path directly
+            POST_PATH="${{ github.event.inputs.post_path }}"
+            echo "posts=$POST_PATH" >> "$GITHUB_OUTPUT"
+          else
+            # Automatic trigger: find blog/*/index.html files changed in this push
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'blog/*/index.html' | head -5)
+            if [ -z "$CHANGED" ]; then
+              echo "No blog post changes detected — skipping."
+              echo "posts=" >> "$GITHUB_OUTPUT"
+            else
+              echo "posts=$CHANGED" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      # ── 3. For each changed post: extract content, generate summary, post ─
+      - name: Generate summary and post to LinkedIn
+        if: steps.detect.outputs.posts != ''
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ZAPIER_WEBHOOK_URL: ${{ secrets.ZAPIER_WEBHOOK_URL }}
+        run: |
+          python3 << 'PYEOF'
+          import os, re, json, urllib.request, urllib.error, textwrap
+
+          posts = os.environ["CHANGED_POSTS"].strip().split()
+          webhook_url = os.environ["ZAPIER_WEBHOOK_URL"].strip()
+          openai_key  = os.environ["OPENAI_API_KEY"].strip()
+
+          def strip_html(html: str) -> str:
+              """Very lightweight HTML → plain text for prompt context."""
+              # Remove script/style blocks
+              html = re.sub(r'<(script|style)[^>]*>.*?</\1>', '', html, flags=re.S|re.I)
+              # Remove all tags
+              text = re.sub(r'<[^>]+>', ' ', html)
+              # Collapse whitespace
+              text = re.sub(r'\s+', ' ', text).strip()
+              return text
+
+          def extract_post_metadata(html: str):
+              title_m = re.search(r'<title>([^<]+)</title>', html, re.I)
+              title = title_m.group(1).replace(' — Igor Rivin', '').strip() if title_m else 'New post'
+              # Try to get post URL from canonical or infer from path
+              canon_m = re.search(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)["\']', html, re.I)
+              return title
+
+          def get_post_url(filepath: str) -> str:
+              # blog/polya-rlhf/index.html → https://igorrivin.github.io/blog/polya-rlhf/
+              parts = filepath.replace('index.html', '').rstrip('/')
+              return f"https://igorrivin.github.io/{parts}/"
+
+          def generate_summary(title: str, body_text: str, post_url: str) -> str:
+              """Call OpenAI to produce a LinkedIn post (under 1200 chars, no emoji)."""
+              system = textwrap.dedent("""
+                  You are writing a LinkedIn post for Igor Rivin, a professor of mathematics
+                  and AI researcher at Temple University / Princeton / St Andrews.
+                  He writes about research mathematics, AI, LLMs, and formal verification.
+
+                  Rules:
+                  - No emoji whatsoever
+                  - Technically precise — the audience are researchers and engineers
+                  - 3 short paragraphs maximum, or 1 paragraph + 2-3 bullet points
+                  - End with: "Full post: {POST_URL}"
+                  - Hashtags on the final line: #AI #Mathematics #LLM #Research
+                  - Total length MUST be under 1100 characters (leave margin for safety)
+                  - Do not use the word "delve" or "exciting" or "fascinating"
+                  - First sentence should be a direct statement of the finding, not a question
+              """).strip()
+
+              user_msg = (
+                  f"Write a LinkedIn post announcing this blog post.\n\n"
+                  f"Title: {title}\n\n"
+                  f"Content summary (first 2000 chars of article text):\n{body_text[:2000]}\n\n"
+                  f"Post URL: {post_url}"
+              )
+
+              payload = {
+                  "model": "gpt-4o",
+                  "messages": [
+                      {"role": "system", "content": system},
+                      {"role": "user",   "content": user_msg},
+                  ],
+                  "max_tokens": 400,
+                  "temperature": 0.4,
+              }
+
+              req = urllib.request.Request(
+                  "https://api.openai.com/v1/chat/completions",
+                  data=json.dumps(payload).encode(),
+                  headers={
+                      "Authorization": f"Bearer {openai_key}",
+                      "Content-Type": "application/json",
+                  },
+                  method="POST",
+              )
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  data = json.loads(resp.read())
+
+              return data["choices"][0]["message"]["content"].strip()
+
+          def post_to_zapier(post_text: str, webhook_url: str) -> None:
+              char_count = len(post_text)
+              print(f"LinkedIn post ({char_count} chars):\n{post_text}\n")
+              if char_count > 1200:
+                  raise ValueError(f"Post is {char_count} chars, exceeds 1200 limit. Aborting.")
+
+              payload = json.dumps({"post_text": post_text}).encode()
+              req = urllib.request.Request(
+                  webhook_url,
+                  data=payload,
+                  headers={"Content-Type": "application/json"},
+                  method="POST",
+              )
+              with urllib.request.urlopen(req, timeout=15) as resp:
+                  body = resp.read().decode()
+              print(f"Zapier response: {resp.status} — {body}")
+
+          for filepath in posts:
+              filepath = filepath.strip()
+              if not filepath or not os.path.exists(filepath):
+                  print(f"Skipping {filepath}: file not found")
+                  continue
+
+              print(f"\n=== Processing {filepath} ===")
+              with open(filepath, encoding="utf-8") as f:
+                  html = f.read()
+
+              title    = extract_post_metadata(html)
+              body     = strip_html(html)
+              post_url = get_post_url(filepath)
+
+              print(f"Title:    {title}")
+              print(f"URL:      {post_url}")
+              print(f"Body len: {len(body)} chars")
+
+              summary = generate_summary(title, body, post_url)
+              post_to_zapier(summary, webhook_url)
+
+          PYEOF
+        env:
+          CHANGED_POSTS: ${{ steps.detect.outputs.posts }}
+          ZAPIER_WEBHOOK_URL: ${{ secrets.ZAPIER_WEBHOOK_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
