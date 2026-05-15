@@ -49,9 +49,6 @@ jobs:
       # ── 3. For each changed post: extract content, generate summary, post ─
       - name: Generate summary and post to LinkedIn
         if: steps.detect.outputs.posts != ''
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ZAPIER_WEBHOOK_URL: ${{ secrets.ZAPIER_WEBHOOK_URL }}
         run: |
           python3 << 'PYEOF'
           import os, re, json, urllib.request, urllib.error, textwrap
