@@ -70,16 +70,36 @@ jobs:
           def extract_post_metadata(html: str):
               title_m = re.search(r'<title>([^<]+)</title>', html, re.I)
               title = title_m.group(1).replace(' — Igor Rivin', '').strip() if title_m else 'New post'
-              # Try to get post URL from canonical or infer from path
-              canon_m = re.search(r'<link[^>]+rel=["\']canonical["\'][^>]+href=["\']([^"\']+)["\']', html, re.I)
               return title
+
+          def extract_notable_links(html: str) -> list:
+              """Extract hrefs from <a> tags that look like project/demo/paper URLs."""
+              # Pull all href values from anchor tags
+              hrefs = re.findall(r'<a[^>]+href=["\']([^"\']+)["\']', html, re.I)
+              skip_patterns = (
+                  'igorrivin.github.io', 'github.com/igorrivin',
+                  '#', 'mailto:', 'javascript:', 'twitter.com', 'linkedin.com',
+                  'arxiv.org/abs/hep',  # catch-all internal/social noise
+              )
+              seen = set()
+              notable = []
+              for h in hrefs:
+                  h = h.strip()
+                  if not h.startswith('http'):
+                      continue
+                  if any(p in h for p in skip_patterns):
+                      continue
+                  if h not in seen:
+                      seen.add(h)
+                      notable.append(h)
+              return notable[:8]  # cap at 8 to keep prompt concise
 
           def get_post_url(filepath: str) -> str:
               # blog/polya-rlhf/index.html → https://igorrivin.github.io/blog/polya-rlhf/
               parts = filepath.replace('index.html', '').rstrip('/')
               return f"https://igorrivin.github.io/{parts}/"
 
-          def generate_summary(title: str, body_text: str, post_url: str) -> str:
+          def generate_summary(title: str, body_text: str, post_url: str, notable_links: list) -> str:
               """Call OpenAI to produce a LinkedIn post (under 1200 chars, no emoji)."""
               system = textwrap.dedent("""
                   You are writing a LinkedIn post for Igor Rivin, a professor of mathematics
@@ -95,12 +115,18 @@ jobs:
                   - Total length MUST be under 1100 characters (leave margin for safety)
                   - Do not use the word "delve" or "exciting" or "fascinating"
                   - First sentence should be a direct statement of the finding, not a question
+                  - If the post describes or links to a specific tool, demo, or project, include its URL in the post body (not just in the closing line)
               """).strip()
+
+              links_section = ""
+              if notable_links:
+                  links_section = "\n\nNotable URLs found in the post (include the most relevant one in the body if it refers to a demo, tool, or primary subject):\n" + "\n".join(f"  - {u}" for u in notable_links)
 
               user_msg = (
                   f"Write a LinkedIn post announcing this blog post.\n\n"
                   f"Title: {title}\n\n"
-                  f"Content summary (first 2000 chars of article text):\n{body_text[:2000]}\n\n"
+                  f"Content summary (first 2000 chars of article text):\n{body_text[:2000]}"
+                  f"{links_section}\n\n"
                   f"Post URL: {post_url}"
               )
 
@@ -173,7 +199,8 @@ jobs:
               print(f"URL:      {post_url}")
               print(f"Body len: {len(body)} chars")
 
-              summary = generate_summary(title, body, post_url)
+              links   = extract_notable_links(html)
+              summary = generate_summary(title, body, post_url, links)
               post_to_zapier(summary, webhook_url)
 
           PYEOF
