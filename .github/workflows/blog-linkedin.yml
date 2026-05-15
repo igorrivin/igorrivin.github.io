@@ -106,16 +106,16 @@ jobs:
 
               payload = {
                   "model": "gpt-5.5",
-                  "messages": [
+                  "input": [
                       {"role": "system", "content": system},
                       {"role": "user",   "content": user_msg},
                   ],
-                  "reasoning_effort": "medium",
-                  "max_tokens": 800,
+                  "reasoning": {"effort": "medium"},
+                  "max_output_tokens": 800,
               }
 
               req = urllib.request.Request(
-                  "https://api.openai.com/v1/chat/completions",
+                  "https://api.openai.com/v1/responses",
                   data=json.dumps(payload).encode(),
                   headers={
                       "Authorization": f"Bearer {openai_key}",
@@ -123,10 +123,10 @@ jobs:
                   },
                   method="POST",
               )
-              with urllib.request.urlopen(req, timeout=30) as resp:
+              with urllib.request.urlopen(req, timeout=120) as resp:
                   data = json.loads(resp.read())
 
-              return data["choices"][0]["message"]["content"].strip()
+              return data["output_text"].strip()
 
           def post_to_zapier(post_text: str, webhook_url: str) -> None:
               char_count = len(post_text)
