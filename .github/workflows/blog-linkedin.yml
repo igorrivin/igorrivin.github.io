@@ -164,13 +164,14 @@ jobs:
                   raise ValueError(f"No text output in response. Keys: {list(data.keys())}. Output: {data.get('output')}")
               return " ".join(text_parts).strip()
 
-          def post_to_zapier(post_text: str, webhook_url: str) -> None:
+          def post_to_zapier(post_text: str, webhook_url: str, post_url: str) -> None:
               char_count = len(post_text)
               print(f"LinkedIn post ({char_count} chars):\n{post_text}\n")
               if char_count > 1200:
                   raise ValueError(f"Post is {char_count} chars, exceeds 1200 limit. Aborting.")
 
-              payload = json.dumps({"post_text": post_text}).encode()
+              # Send both post_text (body) and url (Content - URL for Zapier LinkedIn action)
+              payload = json.dumps({"post_text": post_text, "url": post_url}).encode()
               req = urllib.request.Request(
                   webhook_url,
                   data=payload,
@@ -201,7 +202,7 @@ jobs:
 
               links   = extract_notable_links(html)
               summary = generate_summary(title, body, post_url, links)
-              post_to_zapier(summary, webhook_url)
+              post_to_zapier(summary, webhook_url, post_url)
 
           PYEOF
         env:
