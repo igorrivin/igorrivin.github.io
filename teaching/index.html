@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching | Igor Rivin</title>
+    <meta name="description" content="Open course materials in number theory, probability, and statistics by Igor Rivin.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .teaching-page {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 120px 2rem 5rem;
+        }
+        .page-intro {
+            max-width: 760px;
+            margin-bottom: 3rem;
+        }
+        .page-title {
+            color: #1e293b;
+            font-size: 2.75rem;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+        }
+        .page-subtitle {
+            color: #64748b;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 2rem;
+        }
+        .course-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.13);
+        }
+        .course-accent {
+            height: 7px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+        }
+        .course-card.probability .course-accent {
+            background: linear-gradient(90deg, #6857b2, #2b9b82);
+        }
+        .course-content {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            padding: 2rem;
+        }
+        .course-kicker {
+            color: #2563eb;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.65rem;
+            text-transform: uppercase;
+        }
+        .probability .course-kicker {
+            color: #6857b2;
+        }
+        .course-title {
+            color: #1e293b;
+            font-size: 1.65rem;
+            line-height: 1.25;
+            margin-bottom: 0.4rem;
+        }
+        .course-name {
+            color: #64748b;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1.25rem;
+        }
+        .course-description {
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .course-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .course-topic {
+            color: #475569;
+            background: #f1f5f9;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 0.35rem 0.75rem;
+        }
+        .course-link {
+            align-self: flex-start;
+            margin-top: auto;
+        }
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .teaching-page {
+                padding: 105px 1.25rem 4rem;
+            }
+            .page-title {
+                font-size: 2.25rem;
+            }
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V2J6QDNPZZ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V2J6QDNPZZ');
+    </script>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="nav">
+                <div class="logo">
+                    <a href="/" style="text-decoration: none; color: inherit;"><h1>Igor Rivin</h1></a>
+                </div>
+                <div class="nav-links">
+                    <a href="/#about">About</a>
+                    <a href="/#projects">Projects</a>
+                    <a href="/research/">Research</a>
+                    <a href="/teaching/" class="active">Teaching</a>
+                    <a href="/blog/">Blog</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="teaching-page">
+        <a href="/" class="back-link">&larr; Back to Home</a>
+        <div class="page-intro">
+            <h1 class="page-title">Teaching</h1>
+            <p class="page-subtitle">
+                Open, interactive course materials designed to connect mathematical ideas,
+                visual intuition, computation, and proof.
+            </p>
+        </div>
+
+        <div class="course-grid">
+            <article class="course-card">
+                <div class="course-accent"></div>
+                <div class="course-content">
+                    <p class="course-kicker">Introductory Number Theory</p>
+                    <h2 class="course-title">Patterns, Proofs, and Primes</h2>
+                    <p class="course-name">A first course in number theory</p>
+                    <p class="course-description">
+                        An illustrated path from the Euclidean algorithm and unique factorization
+                        through continued fractions, modular arithmetic, Fermat's little theorem,
+                        groups, binomial divisibility, and Chebyshev's estimate for the primes.
+                    </p>
+                    <div class="course-topics" aria-label="Course features">
+                        <span class="course-topic">Interactive illustrations</span>
+                        <span class="course-topic">Exercises</span>
+                        <span class="course-topic">Proofs</span>
+                        <span class="course-topic">Computational labs</span>
+                    </div>
+                    <a class="btn btn-primary course-link" href="https://numbertheoryintro.dimensionreducers.ai" target="_blank" rel="noopener">Visit the course</a>
+                </div>
+            </article>
+
+            <article class="course-card probability">
+                <div class="course-accent"></div>
+                <div class="course-content">
+                    <p class="course-kicker">Introductory Probability &amp; Statistics</p>
+                    <h2 class="course-title">Chance, Data, and Decisions</h2>
+                    <p class="course-name">A first course in probability and statistics</p>
+                    <p class="course-description">
+                        A visual introduction to events, conditional probability, random variables,
+                        standard distributions, moments, multivariate probability, sampling,
+                        estimation, and Bayesian inference.
+                    </p>
+                    <div class="course-topics" aria-label="Course features">
+                        <span class="course-topic">Interactive experiments</span>
+                        <span class="course-topic">Exercises</span>
+                        <span class="course-topic">Data intuition</span>
+                        <span class="course-topic">Bayesian inference</span>
+                    </div>
+                    <a class="btn btn-primary course-link" href="https://introproba.dimensionreducers.ai" target="_blank" rel="noopener">Visit the course</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2026 Igor Rivin. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/igorrivin" target="_blank" rel="noopener">GitHub</a>
+                    <a href="mailto:igor@dimensionreducers.com">Email</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>
